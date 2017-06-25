@@ -3,8 +3,8 @@ Python3 Script to check Poloniex for trades and either send an email via Sendgri
 
 # Requirements
 
-`python-poloniex` - to install: `pip3 install https://github.com/s4w3d0ff/python-poloniex/archive/v0.4.4.zip`
-`sendgrid` - only for email notification method
+* `python-poloniex` To install manually: `pip3 install https://github.com/s4w3d0ff/python-poloniex/archive/v0.4.4.zip`
+* `sendgrid` Only for email notification method
 
 # Configuration
 
@@ -15,10 +15,10 @@ Change the following values in the configuration section of the script:
 1. Update period in seconds
 1. Notification method 'email' or 'pushed'
 1. For email:
-  1. Sendgrid API  
-  1. Email address for from and to  
+	1. Sendgrid API  
+	1. Email address for from and to  
 1. For Pushed notification:
-  1. Pushed app\_key and app\_secret
+	1. Pushed app\_key and app\_secret
 
 # Python
 
