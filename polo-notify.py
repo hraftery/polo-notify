@@ -44,6 +44,8 @@ polo.Secret = POLONIEX_SECRET
 polo.public = Poloniex(coach=myCoach)
 polo.private = Poloniex(polo.Key, polo.Secret, coach=myCoach)
 
+currentUpdatePeriod = UPDATE_PERIOD_SECS
+
 # Setup done, enter main loop
 while True:
 	if BALANCE_REPORTING:
@@ -53,12 +55,22 @@ while True:
 		balanceUSDT = balance['USDT']
 		#balances = polo.private.returnCompleteBalances()
 
-	current_time = datetime.datetime.now(datetime.timezone.utc)
-	unix_timestamp = current_time.timestamp() # works if Python >= 3.3
-	unix_timestamp_minus_1_period = unix_timestamp - (UPDATE_PERIOD_SECS)
-	tradehistory = polo.private.returnTradeHistory("all", start=unix_timestamp_minus_1_period)
+	dt_now = datetime.datetime.now(datetime.timezone.utc)
+	ts_now = dt_now.timestamp() # works if Python >= 3.3
+	ts_prev = ts_now - currentUpdatePeriod - 2 # 2s hysteresis to account for delays
 
 	print(datetime.datetime.now())
+	
+	#returnTradeHistory occasionally throws "StopIteration" and "ValueError" while decoding
+	try:
+		 tradehistory = polo.private.returnTradeHistory("all", start=ts_prev)
+	except Exception:
+		print("Failed to get trade history. Will try again next time.")
+		currentUpdatePeriod += UPDATE_PERIOD_SECS
+		continue
+
+	currentUpdatePeriod = UPDATE_PERIOD_SECS
+
 	if BALANCE_REPORTING:
 		print("I have" , balanceETH ," ETH")
 		print("I have" , balanceBTC ," BTC")
@@ -120,7 +132,4 @@ while True:
 	else:
 		print("No Trades")
 
-	print("sleeping")
 	time.sleep(UPDATE_PERIOD_SECS)
-
-	
